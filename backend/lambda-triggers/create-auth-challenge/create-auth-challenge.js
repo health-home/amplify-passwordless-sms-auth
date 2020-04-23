@@ -49,6 +49,6 @@ exports.handler = async (event = {}) => {
 
 // Send secret code over SMS via Amazon Simple Notification Service (SNS)
 async function sendSMSviaSNS(phoneNumber, passCode) {
-    const params = { "Message": "[MobileQuickie] Your secret code: " + passCode, "PhoneNumber": phoneNumber };
+    const params = { "Message": "<#> WeCare - Your secret code: " + passCode + " FDyNaTSHPn3", "PhoneNumber": phoneNumber };
     await sns.publish(params).promise();
 }
