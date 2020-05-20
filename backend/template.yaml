@@ -86,9 +86,7 @@ Resources:
           RequireNumbers: true
           RequireSymbols: false
           RequireUppercase: true
-      MfaConfiguration: "OPTIONAL"
-      EnabledMfas:
-        - SOFTWARE_TOKEN_MFA
+      MfaConfiguration: "OFF"
       AccountRecoverySetting:
         RecoveryMechanisms:
           - Name: verified_email
@@ -147,6 +145,41 @@ Resources:
     Type: "AWS::Cognito::UserPoolDomain"
     Properties:
       Domain: !Ref DomainName
+      UserPoolId:  !Ref UserPool
+
+  PatientGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: Patient
+      Description: Group for users with patient role
+      UserPoolId:  !Ref UserPool
+
+  CoachGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: Coach
+      Description: Group for users with coach role
+      UserPoolId:  !Ref UserPool
+
+  DoctorGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: Doctor
+      Description: Group for users with doctor role
+      UserPoolId:  !Ref UserPool
+
+  WeCareAdminGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: WeCareAdmin
+      Description: Group for users with WeCare admin role
+      UserPoolId:  !Ref UserPool
+
+  ClinicAdminGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: ClinicAdmin
+      Description: Group for users with clinic admin role
       UserPoolId:  !Ref UserPool
 
 Outputs:
