@@ -25,6 +25,9 @@ Parameters:
   UserPoolName:
     Type: String
     Description: The name you want the User Pool to be created with
+  DomainName:
+    Type: String
+    Description: The Amazon Cognito domain
 
 Resources:
   DefineAuthChallenge:
@@ -68,24 +71,30 @@ Resources:
     Properties:
       UserPoolName: !Ref UserPoolName
       Schema:
-        - Name: name
+        - Name: platform
           AttributeDataType: String
           Mutable: true
-          Required: true
-        - Name: phone_number
-          AttributeDataType: String
-          Mutable: true
-          Required: true
+          Required: false
+      AliasAttributes:
+        - phone_number
+        - email
+        - preferred_username
       Policies:
         PasswordPolicy:
           MinimumLength: 6
-          RequireLowercase: false
-          RequireNumbers: false
+          RequireLowercase: true
+          RequireNumbers: true
           RequireSymbols: false
-          RequireUppercase: false
-      UsernameAttributes:
-        - phone_number
-      MfaConfiguration: "OFF"
+          RequireUppercase: true
+      MfaConfiguration: "OPTIONAL"
+      EnabledMfas:
+        - SOFTWARE_TOKEN_MFA
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+          - Name: verified_phone_number
+            Priority: 2
       LambdaConfig:
         CreateAuthChallenge: !GetAtt CreateAuthChallenge.Arn
         DefineAuthChallenge: !GetAtt DefineAuthChallenge.Arn
@@ -128,7 +137,17 @@ Resources:
       GenerateSecret: false
       UserPoolId: !Ref UserPool
       ExplicitAuthFlows:
-        - CUSTOM_AUTH_FLOW_ONLY
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  UserPoolDomain:
+    Type: "AWS::Cognito::UserPoolDomain"
+    Properties:
+      Domain: !Ref DomainName
+      UserPoolId:  !Ref UserPool
 
 Outputs:
   UserPoolId:
